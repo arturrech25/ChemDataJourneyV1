@@ -1,0 +1,6 @@
+{
+  "name": "ChemData Journey",
+  "description": "Software completo para acompanhar a transição de carreira de Químico para Data Scientist",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ChemData Journey - Transição Químico para Data Scientist</title>
+  
+  <!-- Fontes do Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  
+  <!-- Estilos Principais -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- Ícones Lucide (Carregado via unpkg) -->
+  <script src="https://unpkg.com/lucide@latest" defer></script>
+  
+  <!-- Chart.js para Visualização de Dados (Carregado via CDN) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+</head>
+<body class="theme-dark">
+
+  <div id="app-shell">
+    
+    <!-- BARRA LATERAL (Sidebar - Estilo Linear / Notion) -->
+    <aside id="sidebar">
+      <div class="sidebar-header">
+        <div class="app-logo">⌬</div>
+        <h1 class="app-title">ChemData Journey</h1>
+      </div>
+      
+      <!-- Navegação SPA -->
+      <nav class="sidebar-menu">
+        <a href="#dashboard" class="menu-item active" data-view="dashboard">
+          <i data-lucide="layout-dashboard"></i> Painel de Controle
+        </a>
+        <a href="#courses" class="menu-item" data-view="courses">
+          <i data-lucide="graduation-cap"></i> Grade Curricular
+        </a>
+        <a href="#diary" class="menu-item" data-view="diary">
+          <i data-lucide="book-open"></i> Diário de Bordo
+        </a>
+        <a href="#settings" class="menu-item" data-view="settings">
+          <i data-lucide="sliders"></i> Configurações
+        </a>
+      </nav>
+      
+      <!-- Card de Transição (Visual e Motivacional) -->
+      <div class="profile-transition-card">
+        <span class="transition-label">Sua Transição</span>
+        <div class="transition-steps">
+          <div class="step-origin">
+            <i data-lucide="flask-conical" style="width: 14px; height: 14px; color: var(--text-secondary);"></i>
+            <span id="user-role-display">Químico de Bancada</span>
+          </div>
+          <div class="transition-arrow"></div>
+          <div class="step-dest">
+            <i data-lucide="binary" style="width: 14px; height: 14px;"></i>
+            <span id="user-name-display">Cientista de Dados</span>
+          </div>
+        </div>
+        
+        <div class="transition-progress">
+          <div class="progress-header">
+            <span>Progresso Geral</span>
+            <span id="sidebar-progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="sidebar-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Rodapé da Sidebar -->
+      <div class="sidebar-footer">
+        <div style="display: flex; gap: 8px; flex-direction: column; width: 100%;">
+          <button id="auth-btn" class="btn btn-secondary btn-sm" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <i data-lucide="log-in" style="width: 14px; height: 14px;"></i>
+            <span id="auth-btn-text">Entrar</span>
+          </button>
+          
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <button id="theme-toggle-btn" class="theme-toggle" title="Alternar Modo Escuro/Claro">
+              <i data-lucide="sun-moon" style="width: 14px; height: 14px;"></i>
+              <span id="theme-toggle-text">Modo Claro</span>
+            </button>
+            <span style="font-size: 10px; color: var(--text-muted); font-family: var(--font-mono);">v1.1.0 (Cloud)</span>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ÁREA DE CONTEÚDO PRINCIPAL (Main Content Canvas) -->
+    <main id="main-content">
+      
+      <!-- ======================================================= -->
+      <!-- VIEW 1: PAINEL DE CONTROLE (DASHBOARD) -->
+      <!-- ======================================================= -->
+      <section id="view-dashboard" class="view" style="display: none;">
+        <header class="view-header">
+          <div class="header-title-area">
+            <h1>Painel de Controle</h1>
+            <p class="header-subtitle">Acompanhe seus dados de transição de carreira e metas de estudo de forma ágil.</p>
+          </div>
+        </header>
+        
+        <div class="view-body">
+          
+          <!-- Grid de Métricas Principais -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Tempo Estudado</span>
+                <div class="metric-icon">
+                  <i data-lucide="clock" style="width: 15px; height: 15px;"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="metric-total-hours">0h</div>
+              <div class="metric-desc">Total acumulado de horas de estudo</div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Cursos Concluídos</span>
+                <div class="metric-icon">
+                  <i data-lucide="award" style="width: 15px; height: 15px;"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="metric-courses-completed">0/24</div>
+              <div class="metric-desc">Checklist de capacitação técnica</div>
+            </div>
+            
+            <div class="metric-card">
+              <div class="metric-header">
+                <span>Semanas Concluídas</span>
+                <div class="metric-icon">
+                  <i data-lucide="calendar" style="width: 15px; height: 15px;"></i>
+                </div>
+              </div>
+              <div class="metric-value" id="metric-weeks-completed">0/24</div>
+              <div class="metric-desc">Semanas de cronograma prático</div>
+            </div>
+          </div>
+          
+          <!-- Bloco da Timeline das 24 Semanas -->
+          <div class="section-panel">
+            <div class="panel-header">
+              <h3 class="panel-title">
+                <i data-lucide="calendar-days" style="color: var(--accent); width: 18px; height: 18px;"></i>
+                Cronograma de Estudos - Timeline de 24 Semanas (6 Meses)
+              </h3>
+              <span style="font-size: 11px; color: var(--text-muted);">Clique em uma semana para visualizar e concluir</span>
+            </div>
+            
+            <div class="timeline-container">
+              <div class="timeline-months-indicator">
+                <span>Mês 1 (Python)</span>
+                <span>Mês 2 (SQL)</span>
+                <span>Mês 3 (Estatística)</span>
+                <span>Mês 4 (ML)</span>
+                <span>Mês 5 (Kaggle/Git)</span>
+                <span>Mês 6 (Projetos)</span>
+              </div>
+              <div class="weeks-grid" id="weeks-grid">
+                <!-- Preenchido dinamicamente via JS -->
+              </div>
+            </div>
+            
+            <!-- Painel de Detalhes da Semana Selecionada -->
+            <div class="week-detail-modal" id="week-detail-panel">
+              <!-- Injetado dinamicamente ao clicar na semana -->
+            </div>
+          </div>
+          
+          <!-- Grid Duplo: Registro Rápido + Gráfico de Estudos -->
+          <div class="dashboard-columns">
+            
+            <!-- Painel de Análise Gráfica -->
+            <div class="section-panel" style="display: flex; flex-direction: column;">
+              <div class="panel-header" style="margin-bottom: 12px;">
+                <h3 class="panel-title">
+                  <i data-lucide="trending-up" style="color: var(--accent); width: 18px; height: 18px;"></i>
+                  Evolução Semanal e Horas Dedicadas
+                </h3>
+              </div>
+              <div id="chart-container" style="position: relative; flex-grow: 1; height: 220px; min-height: 200px;">
+                <!-- O gráfico do Chart.js ou o SVG fallback será injetado aqui -->
+                <canvas id="study-chart"></canvas>
+              </div>
+            </div>
+
+            <!-- Registro Rápido de Horas -->
+            <div class="section-panel next-task-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="panel-header" style="margin-bottom: 8px;">
+                  <h3 class="panel-title">
+                    <i data-lucide="plus-circle" style="color: var(--secondary); width: 18px; height: 18px;"></i>
+                    Registrar Sessão de Estudos
+                  </h3>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Estudou hoje? Insira as horas estudadas abaixo para alimentar seu dashboard analítico:</p>
+                
+                <form id="form-quick-log-hours" style="display: flex; gap: 8px;">
+                  <input type="number" id="add-hours-value" min="0.1" max="24" step="0.1" class="settings-input" style="flex-grow: 1; padding: 6px 12px; font-size: 13px;" placeholder="Ex: 2.5 horas" required>
+                  <button type="submit" class="btn btn-primary btn-sm">
+                    <i data-lucide="plus" style="width: 14px; height: 14px;"></i> Registrar
+                  </button>
+                </form>
+              </div>
+
+              <div style="border-top: 1px solid var(--border-color); margin-top: 16px; padding-top: 12px;">
+                <div class="panel-header" style="margin-bottom: 4px;">
+                  <h3 class="panel-title">
+                    <i data-lucide="compass" style="color: var(--accent); width: 16px; height: 16px;"></i>
+                    Próxima Meta Recomendada
+                  </h3>
+                </div>
+                <div id="next-task-container">
+                  <!-- Injetado dinamicamente por JS -->
+                </div>
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- VIEW 2: GRADE CURRICULAR (COURSES) -->
+      <!-- ======================================================= -->
+      <section id="view-courses" class="view" style="display: none;">
+        <header class="view-header">
+          <div class="header-title-area">
+            <h1>Grade Curricular & Cursos</h1>
+            <p class="header-subtitle">Visualize seu plano de capacitação completo. Salve links de referência e certificados de conclusão.</p>
+          </div>
+        </header>
+        
+        <div class="view-body">
+          <div class="months-courses-list" id="months-courses-list">
+            <!-- Renderizado dinamicamente via JS agrupando por mês do roadmap -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- VIEW 3: DIÁRIO DE BORDO (DIARY) -->
+      <!-- ======================================================= -->
+      <section id="view-diary" class="view" style="display: none;">
+        <header class="view-header">
+          <div class="header-title-area">
+            <h1>Diário de Bordo</h1>
+            <p class="header-subtitle">Documente seus progressos, ideias, códigos e anote reflexões sobre sua migração de carreira.</p>
+          </div>
+        </header>
+        
+        <div class="view-body">
+          
+          <!-- Splitter Layout inspirado em aplicativos como Notion -->
+          <div class="diary-splitter">
+            
+            <!-- Barra Lateral do Diário: Lista de Datas -->
+            <div class="diary-sidebar">
+              <div class="diary-sidebar-header">
+                <span class="transition-label" style="margin-bottom: 0;">Histórico de Anotações</span>
+              </div>
+              <ul class="diary-history-list" id="diary-history-list">
+                <!-- Datas injetadas via JS -->
+              </ul>
+            </div>
+            
+            <!-- Área Principal do Editor de Notas -->
+            <div class="diary-content-area">
+              <div class="diary-editor-header">
+                <h3 class="diary-editor-date" id="diary-editor-date">Anotações de: Carregando...</h3>
+                <span id="diary-autosave-indicator" class="diary-autosave-indicator saved">✓ Salvo localmente</span>
+              </div>
+              
+              <!-- Caixa de Inspiração focada em Química de Dados -->
+              <div class="diary-inspiration-tip">
+                <i data-lucide="sparkles" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px; color: var(--secondary);"></i>
+                <span id="diary-inspiration-text">Dica de Hoje: Escreva um pouco sobre como os laços FOR do Python se correlacionam à adição repetida de um titulante analítico.</span>
+              </div>
+              
+              <textarea class="diary-textarea" id="diary-textarea" placeholder="O que você aprendeu ou desenvolveu hoje? Escreva aqui..."></textarea>
+            </div>
+            
+          </div>
+
+        </div>
+      </section>
+
+      <!-- ======================================================= -->
+      <!-- VIEW 4: CONFIGURAÇÕES (SETTINGS) -->
+      <!-- ======================================================= -->
+      <section id="view-settings" class="view" style="display: none;">
+        <header class="view-header">
+          <div class="header-title-area">
+            <h1>Configurações do Software</h1>
+            <p class="header-subtitle">Gerencie suas metas diárias, dados de perfil e realize backup offline do seu progresso.</p>
+          </div>
+        </header>
+        
+        <div class="view-body">
+          
+          <div class="dashboard-columns">
+            
+            <!-- Formulário de Perfil & Metas -->
+            <div class="section-panel">
+              <div class="panel-header" style="margin-bottom: 16px;">
+                <h3 class="panel-title">
+                  <i data-lucide="user" style="color: var(--accent); width: 18px; height: 18px;"></i>
+                  Dados de Perfil & Metas
+                </h3>
+              </div>
+              
+              <form id="settings-form" class="settings-form">
+                <div class="settings-group">
+                  <label for="cfg-user-name">Seu Nome Completo:</label>
+                  <input type="text" id="cfg-user-name" class="settings-input" placeholder="Seu Nome" required>
+                </div>
+                
+                <div class="settings-group">
+                  <label for="cfg-user-role">Cargo Químico Inicial:</label>
+                  <input type="text" id="cfg-user-role" class="settings-input" placeholder="Ex: Engenheiro Químico / Químico de Bancada" required>
+                </div>
+                
+                <div class="settings-group">
+                  <label for="cfg-target-role">Alvo de Transição:</label>
+                  <input type="text" id="cfg-target-role" class="settings-input" placeholder="Ex: Cientista de Dados Químicos" required>
+                </div>
+                
+                <div class="settings-group">
+                  <label for="cfg-daily-goal">Meta Diária de Estudos (Horas):</label>
+                  <input type="number" id="cfg-daily-goal" min="0.5" max="18" step="0.5" class="settings-input" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="margin-top: 12px; align-self: flex-start;">
+                  <i data-lucide="save" style="width: 14px; height: 14px;"></i> Salvar Configurações
+                </button>
+              </form>
+            </div>
+            
+            <!-- Backup, Importação e Manutenção -->
+            <div class="section-panel" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div class="panel-header" style="margin-bottom: 12px;">
+                  <h3 class="panel-title">
+                    <i data-lucide="database" style="color: var(--secondary); width: 18px; height: 18px;"></i>
+                    Backup & Salvamento Local
+                  </h3>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 16px;">Todo o progresso do ChemData Journey é salvo automaticamente em tempo real no seu navegador. Caso mude de computador ou limpe o cache do navegador, você pode exportar ou importar seu backup:</p>
+                
+                <div class="export-import-zone">
+                  <button class="btn btn-secondary btn-sm" id="btn-export-data" style="flex-grow: 1;">
+                    <i data-lucide="download" style="width: 14px; height: 14px;"></i> Exportar Backup (JSON)
+                  </button>
+                  
+                  <label class="btn btn-secondary btn-sm" style="flex-grow: 1; text-align: center; display: inline-flex; justify-content: center; align-items: center; gap: 8px;">
+                    <i data-lucide="upload" style="width: 14px; height: 14px;"></i> Importar Backup (JSON)
+                    <input type="file" id="input-import-file" accept=".json" style="display: none;">
+                  </label>
+                </div>
+              </div>
+              
+              <div style="border-top: 1px solid var(--border-color); margin-top: 24px; padding-top: 16px;">
+                <div class="panel-header" style="margin-bottom: 8px;">
+                  <h3 class="panel-title" style="color: var(--danger);">
+                    <i data-lucide="alert-triangle" style="width: 18px; height: 18px;"></i>
+                    Área Perigosa
+                  </h3>
+                </div>
+                <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Isto limpará permanentemente todos os registros de diários de bordo, horas de estudo e cursos concluídos de volta aos valores de fábrica.</p>
+                <button class="btn btn-danger btn-sm" id="btn-reset-data" style="width: 100%;">
+                  Limpar Todos os Dados e Reiniciar
+                </button>
+              </div>
+            </div>
+            
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+    
+  </div>
+
+  <!-- SCRIPT ENGINE CARREGAMENTO SEQUENCIAL -->
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
